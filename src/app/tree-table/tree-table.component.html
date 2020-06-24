@@ -1,0 +1,57 @@
+<div #container [ngStyle]="style" [class]="styleClass"
+	[ngClass]="{'ui-treetable ui-widget': true, 'ui-treetable-auto-layout': autoLayout, 'ui-treetable-hoverable-rows': (rowHover||(selectionMode === 'single' || selectionMode === 'multiple')),
+                'ui-treetable-resizable': resizableColumns, 'ui-treetable-resizable-fit': (resizableColumns && columnResizeMode === 'fit'), 'ui-treetable-flex-scrollable': (scrollable && scrollHeight === 'flex')}">
+	<div class="ui-treetable-loading ui-widget-overlay" *ngIf="loading && showLoader"></div>
+	<div class="ui-treetable-loading-content" *ngIf="loading && showLoader">
+		<i [class]="'ui-treetable-loading-icon pi-spin ' + loadingIcon"></i>
+	</div>
+	<div *ngIf="captionTemplate" class="ui-treetable-caption ui-widget-header">
+		<ng-container *ngTemplateOutlet="captionTemplate"></ng-container>
+	</div>
+	<p-paginator [rows]="rows" [first]="first" [totalRecords]="totalRecords" [pageLinkSize]="pageLinks"
+		styleClass="ui-paginator-top" [alwaysShow]="alwaysShowPaginator" (onPageChange)="onPageChange($event)"
+		[rowsPerPageOptions]="rowsPerPageOptions"
+		*ngIf="paginator && (paginatorPosition === 'top' || paginatorPosition =='both')"
+		[templateLeft]="paginatorLeftTemplate" [templateRight]="paginatorRightTemplate"
+		[dropdownAppendTo]="paginatorDropdownAppendTo" [currentPageReportTemplate]="currentPageReportTemplate"
+		[showCurrentPageReport]="showCurrentPageReport"></p-paginator>
+
+	<div class="ui-treetable-wrapper" *ngIf="!scrollable">
+		<table #table class="ui-treetable-table">
+			<ng-container *ngTemplateOutlet="colGroupTemplate; context {$implicit: columns}"></ng-container>
+			<thead class="ui-treetable-thead">
+				<ng-container *ngTemplateOutlet="headerTemplate; context: {$implicit: columns}"></ng-container>
+			</thead>
+			<tfoot class="ui-treetable-tfoot">
+				<ng-container *ngTemplateOutlet="footerTemplate; context {$implicit: columns}"></ng-container>
+			</tfoot>
+			<tbody class="ui-treetable-tbody" [pTreeTableBody]="columns" [pTreeTableBodyTemplate]="bodyTemplate">
+			</tbody>
+		</table>
+	</div>
+
+	<div class="ui-treetable-scrollable-wrapper" *ngIf="scrollable">
+		<div class="ui-treetable-scrollable-view ui-treetable-frozen-view" *ngIf="frozenColumns||frozenBodyTemplate"
+			#scrollableFrozenView [ttScrollableView]="frozenColumns" [frozen]="true" [ngStyle]="{width: frozenWidth}"
+			[scrollHeight]="scrollHeight"></div>
+		<div class="ui-treetable-scrollable-view" #scrollableView [ttScrollableView]="columns" [frozen]="false"
+			[scrollHeight]="scrollHeight" [ngStyle]="{left: frozenWidth, width: 'calc(100% - '+frozenWidth+')'}"></div>
+	</div>
+
+	<p-paginator [rows]="rows" [first]="first" [totalRecords]="totalRecords" [pageLinkSize]="pageLinks"
+		styleClass="ui-paginator-bottom" [alwaysShow]="alwaysShowPaginator" (onPageChange)="onPageChange($event)"
+		[rowsPerPageOptions]="rowsPerPageOptions"
+		*ngIf="paginator && (paginatorPosition === 'bottom' || paginatorPosition =='both')"
+		[templateLeft]="paginatorLeftTemplate" [templateRight]="paginatorRightTemplate"
+		[dropdownAppendTo]="paginatorDropdownAppendTo" [currentPageReportTemplate]="currentPageReportTemplate"
+		[showCurrentPageReport]="showCurrentPageReport"></p-paginator>
+	<div *ngIf="summaryTemplate" class="ui-treetable-summary ui-widget-header">
+		<ng-container *ngTemplateOutlet="summaryTemplate"></ng-container>
+	</div>
+
+	<div #resizeHelper class="ui-column-resizer-helper ui-state-highlight" style="display:none"
+		*ngIf="resizableColumns"></div>
+
+	<span #reorderIndicatorUp class="pi pi-arrow-down ui-table-reorder-indicator-up" *ngIf="reorderableColumns"></span>
+	<span #reorderIndicatorDown class="pi pi-arrow-up ui-table-reorder-indicator-down" *ngIf="reorderableColumns"></span>
+</div>
